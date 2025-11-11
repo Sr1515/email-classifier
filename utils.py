@@ -2,7 +2,10 @@ from abc import ABC, abstractmethod
 import pdfplumber
 import json
 import re
+import spacy
 from main import model
+
+nlp = spacy.load("pt_core_news_sm")
 
 email_category = {
     "Produtivo": "Emails que requerem uma ação ou resposta específica (ex.: solicitações de suporte técnico, atualização sobre casos em aberto, dúvidas sobre o sistema).",
@@ -48,12 +51,21 @@ class ExtractorFactory:
                 return extractor
         raise ValueError(f"Tipo de arquivo não suportado: {filename}")
     
+def preprocess_text(text: str) -> str:
+    text = text.lower()
+    content = nlp(text)
+    tokens = [
+        token.lemma_ for token in content
+        if not token.is_stop and not token.is_punct and not token.like_num
+    ]
+    return " ".join(tokens)
 
 def extract_text(file):
     factory = ExtractorFactory()
     extractor = factory.get_extractor(file.filename)
-    ## add NLP here
-    return extractor.extract(file)
+    raw_text = extractor.extract(file)
+    cleaned_text = preprocess_text(raw_text)
+    return cleaned_text
 
 def classify_email(text):
     prompt = f"""
