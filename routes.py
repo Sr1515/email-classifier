@@ -10,10 +10,15 @@ def index():
 @app.route('/processing', methods=["POST"])
 def processing():
     file = request.files.get("file")
+    produtivos = request.form.get("produtivos", "")
+    improdutivos = request.form.get("improdutivos", "")
+    
+    produtivos_list = [x.strip() for x in produtivos.split(",") if x.strip()]
+    improdutivos_list = [x.strip() for x in improdutivos.split(",") if x.strip()]
     
     if not file:
         return "Nenhum arquivo enviado!", 400
-    
+
     try:
         text = extract_text(file)
     except ValueError as e:
@@ -21,27 +26,25 @@ def processing():
 
     if not text.strip():
         return "Não foi possível extrair texto do arquivo.", 400
-    
-    result = classify_email(text)
 
-    if isinstance(result, str): 
+    result = classify_email(text, produtivos_list, improdutivos_list)
+
+    if isinstance(result, str):
         return f"Erro ao classificar: {result}", 500
 
     categoria = result.get("categoria", "Desconhecida")
     resposta = result.get("resposta", "Sem resposta gerada.")
-
     produtivo = categoria.lower().startswith("produtivo")
-    
+
     EmailCategory.create(
         title=file.filename,
         body=text,
         productive=produtivo
     )
-    
+
     return jsonify({
-         "arquivo": file.filename,
-         "categoria": categoria,
-         "resposta": resposta
+        "categoria": categoria,
+        "resposta_automatica": resposta,
     })
 
     # return render_template(

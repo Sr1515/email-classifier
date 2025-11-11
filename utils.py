@@ -67,17 +67,32 @@ def extract_text(file):
     cleaned_text = preprocess_text(raw_text)
     return cleaned_text
 
-def classify_email(text):
-    prompt = f"""
-    Você é um assistente que classifica e-mails.
+def classify_email(text, produtivos=None, improdutivos=None):
+    produtivos = produtivos or []
+    improdutivos = improdutivos or []
 
-    As categorias que você deve classficar são:
-    - Produtivo: {email_category['Produtivo']}
-    - Improdutivo: {email_category['Improdutivo']}
+    if produtivos:
+        produtivos_str = f"Palavras-chave: {', '.join(produtivos)}"
+    else:
+        produtivos_str = f"Descrição Padrão: {email_category['Produtivo']}"
+
+    if improdutivos:
+        improdutivos_str = f"Palavras-chave: {', '.join(improdutivos)}"
+    else:
+        improdutivos_str = f"Descrição Padrão: {email_category['Improdutivo']}"
+    
+    prompt = f"""
+    Você é um assistente que classifica e-mails com foco em produtividade.
+
+    As categorias que você deve considerar para classificação são:
+    - Critérios para 'Produtivo': {produtivos_str}
+    - Critérios para 'Improdutivo': {improdutivos_str}
 
     O que você precisa fazer:
-    - Classifique o email abaixo como Produtivo ou Improdutivo
-      e gere uma resposta automática adequada.
+    - Classifique o email abaixo como 'Produtivo' ou 'Improdutivo' 
+      levando em conta os critérios acima e o contexto do texto.
+    - Gere uma resposta automática curta (máximo 50 palavras) e profissional, 
+      adequada ao tom e ao conteúdo do email original.
 
     O que retornar:
     - Retorne somente um JSON no seguinte formato: 
@@ -86,18 +101,20 @@ def classify_email(text):
       "resposta": "Texto da resposta automática"
     }}
 
-    Email:
-    {text}    
+    Email para Classificar:
+    ---
+    {text}
     """
 
-    response = model.generate_content(prompt)
-    raw_text = response.candidates[0].content.parts[0].text
-
-    cleaned = re.sub(r"```(?:json)?", "", raw_text).strip()
-
     try:
+        response = model.generate_content(prompt)
+        raw_text = response.candidates[0].content.parts[0].text
+        cleaned = re.sub(r"```(?:json)?", "", raw_text).strip()
+    
         result = json.loads(cleaned)
     except json.JSONDecodeError:
         return {"erro": "Falha ao decodificar JSON", "texto": cleaned}
 
     return result
+
+    
