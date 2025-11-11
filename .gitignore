@@ -19,7 +19,7 @@ pip-log.txt
 
 .env
 .env.*
-!.env.example # Não ignora o .env.example, que é um template
+!.env.example 
 credentials.json
 
 uploads/
