@@ -21,7 +21,7 @@ app.config.from_object(__name__)
 init_db(app)  
 
 from models.categories_email import EmailCategory
-from routes import *
+from routes.routes import *
 
 if __name__ == '__main__':
     EmailCategory.create_table(safe=True)

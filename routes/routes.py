@@ -1,6 +1,7 @@
 from main import app
 from flask import request, render_template
-from utils import extract_text, classify_email
+from utils.utils import extract_text, classify_email
+from utils.utils import preprocess_text
 from models.categories_email import EmailCategory
 
 @app.route("/", methods=["GET"])
@@ -11,18 +12,23 @@ def index():
 def processing():
     file = request.files.get("file")
     produtivos = request.form.get("produtivos", "")
+    manual_text  = request.form.get("texto_manual", "")
     improdutivos = request.form.get("improdutivos", "")
     
     produtivos_list = [x.strip() for x in produtivos.split(",") if x.strip()]
     improdutivos_list = [x.strip() for x in improdutivos.split(",") if x.strip()]
     
-    if not file:
+    
+    if not file and not manual_text:
         return "Nenhum arquivo enviado!", 400
 
-    try:
-        text = extract_text(file)
-    except ValueError as e:
-        return str(e), 400
+    if manual_text:
+        text = preprocess_text(manual_text)
+    else:
+        try:
+            text = extract_text(file)
+        except ValueError as e:
+            return str(e), 400
 
     if not text.strip():
         return "Não foi possível extrair texto do arquivo.", 400
