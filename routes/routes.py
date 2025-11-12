@@ -1,7 +1,7 @@
 from main import app
 from flask import request, render_template
-from utils.utils import extract_text, classify_email
-from utils.utils import preprocess_text
+from utils.extractProcessorText import extract_text, preprocess_text
+from utils.aiSender import classify_email
 from models.categories_email import EmailCategory
 
 @app.route("/", methods=["GET"])
