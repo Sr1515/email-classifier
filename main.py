@@ -23,11 +23,12 @@ init_db(app)
 from models.categories_email import EmailCategory
 from routes.routes import *
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     EmailCategory.create_table(safe=True)
     print("Tabela EmailCategory criada com sucesso!")
 
     if not gemini_api_key:
         print("\n[AVISO] A chave GEMINI_API_KEY não foi carregada do .env. Certifique-se de preenchê-la.")
     
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
