@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resultado da Classificação</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .scroll-container {
+        max-height: 400px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-800 min-h-screen flex flex-col items-center p-4 sm:p-8">
+    <div
+      class="w-full max-w-4xl bg-white p-6 sm:p-10 rounded-xl shadow-2xl border border-gray-100"
+    >
+      <h1 class="text-3xl font-extrabold text-gray-900 mb-2 text-center">
+        Resultado da Classificação
+      </h1>
+      <p class="text-gray-500 mb-8 text-center">
+        Análise completa para o arquivo:
+        <span class="font-semibold text-gray-700">{{ filename }}</span>
+      </p>
+
+      {% set productive = categoria.lower().startswith('produtivo') %} {% set
+      category_color = 'bg-green-100 text-green-800 border-green-500' if
+      productive else 'bg-yellow-100 text-yellow-800 border-yellow-500' %}
+
+      <div
+        class="mb-8 p-4 rounded-xl border-l-4 shadow-md {{ category_color }}"
+      >
+        <h2 class="text-xl font-bold mb-1">Categoria de E-mail:</h2>
+        <p class="text-3xl font-extrabold">{{ categoria }}</p>
+        <p class="text-sm mt-2">
+          Esta classificação foi baseada no conteúdo do e-mail e nas
+          palavras-chave fornecidas.
+        </p>
+      </div>
+
+      <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-3 border-b pb-2">
+          Sugestão de Resposta Automática
+        </h2>
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <pre class="whitespace-pre-wrap text-gray-700">{{ resposta }}</pre>
+        </div>
+        <p class="text-sm text-gray-500 mt-2">
+          Este é um rascunho de resposta gerado pelo modelo, baseado na
+          categoria e no conteúdo do e-mail.
+        </p>
+      </div>
+
+      <div class="mb-10">
+        <h2 class="text-xl font-bold text-gray-800 mb-3 border-b pb-2">
+          Conteúdo Original Extraído do Arquivo
+        </h2>
+        <div
+          class="bg-white p-4 rounded-lg border border-gray-300 scroll-container"
+        >
+          <pre class="whitespace-pre-wrap text-gray-700 text-sm">
+{{ texto }}</pre
+          >
+        </div>
+      </div>
+
+      <a
+        href="/"
+        class="w-full sm:w-auto flex justify-center py-3 px-8 border border-transparent rounded-lg shadow-lg text-lg font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition duration-200 transform hover:scale-[1.01] mx-auto"
+      >
+        Classificar outro e-mail
+      </a>
+    </div>
+  </body>
+</html>

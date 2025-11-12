@@ -1,5 +1,5 @@
 from main import app
-from flask import request, render_template, jsonify
+from flask import request, render_template
 from utils import extract_text, classify_email
 from models.categories_email import EmailCategory
 
@@ -42,15 +42,10 @@ def processing():
         productive=produtivo
     )
 
-    return jsonify({
-        "categoria": categoria,
-        "resposta_automatica": resposta,
-    })
-
-    # return render_template(
-    #     "result.html",
-    #     filename=file.filename,
-    #     categoria=categoria,
-    #     resposta=resposta,
-    #     texto=text
-    # )
+    return render_template(
+        "result.html",
+        filename=file.filename,
+        categoria=categoria,
+        resposta=resposta,
+        texto=text
+    )

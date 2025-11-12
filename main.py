@@ -10,7 +10,6 @@ gemini_api_key = os.getenv("GEMINI_API_KEY", "")
 genai.configure(api_key=gemini_api_key)
 model = genai.GenerativeModel("gemini-2.5-flash")
 
-
 DATABASE = {
     'name': 'email_category.db',
     'engine': 'peewee.SqliteDatabase'
@@ -18,9 +17,6 @@ DATABASE = {
 
 app = Flask(__name__)
 app.config.from_object(__name__) 
-
-upload_files = "uploads"
-os.makedirs(upload_files, exist_ok=True)
 
 init_db(app)  
 
